@@ -7,6 +7,20 @@
 		<script type='text/javascript' src='../graph.js'></script>
 		<script type='text/javascript' src='../astar.js'></script>
 		<script type='text/javascript' src='test.js'></script>
+    <script>
+      $(function() {
+        $("#runall").click(function() {
+          var result1 = runTest([
+            [0,0,0,0],
+              [1,0,0,1],
+              [1,1,0,0]
+            ], [0,0], [2,3]);
+
+          $("#test-output").append(result1.text);
+          return false;
+        });
+      });
+    </script>
 	</head>
 <body>
 	<div id="header">

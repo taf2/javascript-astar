@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Astar Search Demo</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js'></script>
+		<script type='text/javascript' src='../graph.js'></script>
+		<script type='text/javascript' src='../astar.js'></script>
+		<script type="text/javascript" src="AStar_memtronic.js"><!--// (C) Andrea Giammarchi - RC1 //--></script>
+		<script type='text/javascript' src='test.js'></script>
+    <script>
+      $(function() {
+        var workerBusy = false;
+        var testTypes = ["astar.search", "Manhattan", "Diagonal", "Euclidean", "DiagonalFree", "EuclideanFree"];
+        $("#test-output").append("<ul></ul>");
+
+        function queueTest() {
+          if (workerBusy) { return; }
+          workerBusy = true;
+          var worker = new Worker("test-worker.js");
+          worker.onmessage = function(event) {
+            var trials = event.data;
+            $(testTypes).each(function(i,type) {
+              $("#test-output").append("<li>" + type + ": " + trials[type] + "ms</li>");
+            });
+            workerBusy = false;
+          };
+
+          worker.onerror = function(error) {
+            console.log(error);
+            $("#test-output").append("<li><strong>" + error.message + "</strong></li>");
+          };
+          worker.postMessage({width:500, height:500});
+        }
+
+        $("#runall").click(function(e) { e.preventDefault();
+          queueTest();
+          /*var width = 300,
+              height = 300,
+              random = Math.random,
+              floor  = Math.floor,
+              grid = new Array(height);
+
+          for (var i = 0; i < height; ++i) {
+            grid[i] = new Array(width);
+            for (var j = 0; j < width; ++j) {
+              grid[i][j] = (j * i) % 7 ? floor(random() * 200) % 2 : 0;
+            }
+          }
+
+          // find a distant open position to try
+          var x = -1, y = -1;
+          for (var i = height - 1; i > 0; --i) {
+            for (var j = width - 1; j > 0; --j) {
+              if (grid[i][j] == 0) {
+                x = i;
+                y = j;
+                break;
+              }
+            }
+            if (x != -1 && y != -1) { break; }
+          }
+
+          var result1 = runTest(grid, [0,0], [x,y]);
+
+          $("#test-output").append("<ul></ul>");
+          $("#test-output ul").append("<li>astar.search: " + result1.time + "ms </li>");
+          $(["Manhattan", "Diagonal", "Euclidean", "DiagonalFree", "EuclideanFree"]).each(function(i, type) {
+            var sTime = new Date();
+            AStar(grid, [0,0], [x,y], type);
+            var eTime = new Date();
+            $("#test-output ul").append("<li>" + type + ": " + (eTime - sTime) + "ms </li>");
+          });
+          return false;
+          */
+        });
+      });
+    </script>
+	</head>
+<body>
+	<div id="header">
+		<a href='http://github.com/bgrins/javascript-astar/'>Source Code</a> |
+		<a href='http://www.briangrinstead.com/blog/astar-search-algorithm-in-javascript'>Original Blog Post</a>
+	</div>
+
+	<div id="content">
+		<h2>A* Search Algorithm Test</h2>
+
+	    <div id="main">
+	    	<a href='#' id='runall'>Run all tests</a>
+	    	<div id='test-output'></div>
+	    </div>
+
+	</div>
+	<div id="footer"></div>
+
+</body>
+</html>
